@@ -540,7 +540,8 @@ footer {
 .category-filters,
 .day-filters,
 .time-filters,
-.difficulty-filters {
+.difficulty-filters,
+.group-by-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -549,7 +550,8 @@ footer {
 .category-filter,
 .day-filter,
 .time-filter,
-.difficulty-filter {
+.difficulty-filter,
+.group-by-filter {
   background-color: var(--background);
   border: 1px solid var(--border);
   color: var(--text-primary);
@@ -563,7 +565,8 @@ footer {
 .category-filter.active,
 .day-filter.active,
 .time-filter.active,
-.difficulty-filter.active {
+.difficulty-filter.active,
+.group-by-filter.active {
   background-color: var(--primary);
   color: white;
   border-color: var(--primary-dark);
@@ -572,7 +575,8 @@ footer {
 .category-filter:hover,
 .day-filter:hover,
 .time-filter:hover,
-.difficulty-filter:hover {
+.difficulty-filter:hover,
+.group-by-filter:hover {
   background-color: var(--primary-light);
   color: white;
 }
@@ -768,4 +772,32 @@ body.dark-mode .search-box input {
   background-color: var(--primary-light);
   color: #ffffff;
   font-size: 0.9rem;
+}
+
+/* Group-by section styles */
+#activities-list:has(.activity-group) {
+  display: block;
+}
+
+.activity-group {
+  margin-bottom: 24px;
+}
+
+.group-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 12px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--primary);
+  color: var(--primary);
+  background-color: var(--background);
+  border-radius: 0 4px 4px 0;
+}
+
+.activity-group-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
 }
