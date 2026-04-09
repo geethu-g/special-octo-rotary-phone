@@ -51,6 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
     technology: { label: "Technology", color: "#e8eaf6", textColor: "#3949ab" },
   };
 
+  // Ordered list of categories (matches the order of activityTypes keys)
+  const categoryOrder = Object.keys(activityTypes);
+
+  // Ordered list of days for group-by rendering
+  const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
   // State for activities and filters
   let allActivities = {};
   let currentFilter = "all";
@@ -501,13 +507,15 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       // Render each category group in a defined order
-      const categoryOrder = ["sports", "arts", "academic", "community", "technology"];
       categoryOrder.forEach((type) => {
         if (!groups[type]) return;
         const typeInfo = activityTypes[type];
         const groupSection = document.createElement("div");
         groupSection.className = "activity-group";
-        groupSection.innerHTML = `<h3 class="group-heading" style="border-color:${typeInfo.textColor}; color:${typeInfo.textColor}">${typeInfo.label}</h3>`;
+        const heading = document.createElement("h3");
+        heading.className = `group-heading group-heading--${type}`;
+        heading.textContent = typeInfo.label;
+        groupSection.appendChild(heading);
         const grid = document.createElement("div");
         grid.className = "activity-group-grid";
         groupSection.appendChild(grid);
@@ -519,7 +527,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     } else if (currentGroupBy === "day") {
       // Group activities by day of the week
-      const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
       const groups = {};
       Object.entries(filteredActivities).forEach(([name, details]) => {
         const days = details.schedule_details ? details.schedule_details.days : [];
@@ -533,7 +540,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!groups[day]) return;
         const groupSection = document.createElement("div");
         groupSection.className = "activity-group";
-        groupSection.innerHTML = `<h3 class="group-heading">${day}</h3>`;
+        const heading = document.createElement("h3");
+        heading.className = "group-heading";
+        heading.textContent = day;
+        groupSection.appendChild(heading);
         const grid = document.createElement("div");
         grid.className = "activity-group-grid";
         groupSection.appendChild(grid);
