@@ -942,3 +942,129 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeFilters();
   fetchActivities();
 });
+
+// Git branch background animation
+(function initGitBranchAnimation() {
+  const canvas = document.getElementById("git-branch-canvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  const BRANCH_COLORS = ["#3a7d1e", "#5aac2e", "#39d353", "#26a641", "#245110"];
+  const NUM_BRANCHES = 6;
+  const COMMIT_SPACING = 180; // px between commits on a branch
+  const DRIFT_SPEED = 0.4; // px per frame
+
+  let width, height, branches, mergeLines;
+
+  function setup() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+
+    const laneHeight = height / (NUM_BRANCHES + 1);
+
+    branches = Array.from({ length: NUM_BRANCHES }, (_, i) => {
+      const y = laneHeight * (i + 1);
+      const color = BRANCH_COLORS[i % BRANCH_COLORS.length];
+      // Spread commits across the visible width plus some offscreen buffer
+      const commits = [];
+      for (let x = -COMMIT_SPACING; x < width + COMMIT_SPACING * 2; x += COMMIT_SPACING + Math.random() * 60 - 30) {
+        commits.push({ baseX: x });
+      }
+      return { y, color, commits, offset: 0 };
+    });
+
+    // Create a few merge lines connecting adjacent branches
+    mergeLines = [];
+    for (let i = 0; i < NUM_BRANCHES - 1; i++) {
+      if (Math.random() < 0.6) {
+        const fromBranch = branches[i];
+        const toBranch = branches[i + 1];
+        // Pick a commit index to merge from
+        const commitIdx = Math.floor(Math.random() * (fromBranch.commits.length - 2)) + 1;
+        mergeLines.push({ fromIdx: i, toIdx: i + 1, commitIdx });
+      }
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+
+    // Draw branch lines
+    branches.forEach((branch) => {
+      ctx.beginPath();
+      ctx.strokeStyle = branch.color;
+      ctx.lineWidth = 2;
+      ctx.moveTo(0, branch.y);
+      ctx.lineTo(width, branch.y);
+      ctx.stroke();
+    });
+
+    // Draw merge connections between adjacent branches
+    mergeLines.forEach((merge) => {
+      const from = branches[merge.fromIdx];
+      const to = branches[merge.toIdx];
+      const commit = from.commits[merge.commitIdx];
+      if (!commit) return;
+      const x = commit.baseX + from.offset;
+      if (x < -COMMIT_SPACING || x > width + COMMIT_SPACING) return;
+
+      ctx.beginPath();
+      ctx.strokeStyle = from.color;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]);
+      ctx.moveTo(x, from.y);
+      ctx.bezierCurveTo(x, from.y + (to.y - from.y) * 0.4, x, from.y + (to.y - from.y) * 0.6, x, to.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // Draw commits (circles on each branch)
+    branches.forEach((branch) => {
+      branch.commits.forEach((commit) => {
+        const x = commit.baseX + branch.offset;
+        if (x < -20 || x > width + 20) return;
+        ctx.beginPath();
+        ctx.arc(x, branch.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = branch.color;
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.8)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+    });
+  }
+
+  let animationId;
+  function animate() {
+    branches.forEach((branch) => {
+      branch.offset -= DRIFT_SPEED;
+      // When a commit scrolls fully off-screen to the left, wrap it to the right
+      branch.commits.forEach((commit) => {
+        if (commit.baseX + branch.offset < -COMMIT_SPACING) {
+          commit.baseX += width + COMMIT_SPACING * 2;
+        }
+      });
+    });
+    draw();
+    animationId = requestAnimationFrame(animate);
+  }
+
+  function handleResize() {
+    cancelAnimationFrame(animationId);
+    setup();
+    animate();
+  }
+
+  setup();
+  animate();
+  window.addEventListener("resize", handleResize);
+
+  // Pause animation when tab is hidden to save CPU/battery
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      cancelAnimationFrame(animationId);
+    } else {
+      animate();
+    }
+  });
+}());
