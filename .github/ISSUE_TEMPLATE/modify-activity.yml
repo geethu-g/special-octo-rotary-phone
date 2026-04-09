@@ -1,0 +1,126 @@
+name: Modify an Existing Activity
+description: Request changes to an extracurricular activity already listed on the website.
+title: "Modify activity: [Activity Name]"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to request changes to an activity that is already on the website. Fill in the activity name and only the fields you want to change — leave everything else blank.
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Activity Name
+      description: The exact name of the activity you want to change, as it appears on the website.
+      placeholder: e.g., Chess Club
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: changes-requested
+    attributes:
+      label: What would you like to change?
+      description: Check all that apply. Fill in the new values in the fields below.
+      options:
+        - label: Description
+        - label: Meeting days
+        - label: Start or end time
+        - label: Maximum number of participants
+        - label: Difficulty level
+    validations:
+      required: true
+
+  - type: textarea
+    id: new-description
+    attributes:
+      label: New Description
+      description: Leave blank if you are not changing the description.
+      placeholder: e.g., Learn advanced chess strategies and compete in regional tournaments.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: new-days
+    attributes:
+      label: New Meeting Days
+      description: Select the new set of days this activity should meet. Leave all unchecked if you are not changing the days.
+      options:
+        - label: Monday
+        - label: Tuesday
+        - label: Wednesday
+        - label: Thursday
+        - label: Friday
+        - label: Saturday
+        - label: Sunday
+    validations:
+      required: false
+
+  - type: input
+    id: new-start-time
+    attributes:
+      label: New Start Time
+      description: Leave blank if you are not changing the start time. Use 12-hour format (e.g., 3:15 PM).
+      placeholder: e.g., 3:30 PM
+    validations:
+      required: false
+
+  - type: input
+    id: new-end-time
+    attributes:
+      label: New End Time
+      description: Leave blank if you are not changing the end time. Use 12-hour format (e.g., 5:00 PM).
+      placeholder: e.g., 5:00 PM
+    validations:
+      required: false
+
+  - type: input
+    id: new-max-participants
+    attributes:
+      label: New Maximum Number of Participants
+      description: Leave blank if you are not changing the capacity.
+      placeholder: e.g., 25
+    validations:
+      required: false
+
+  - type: dropdown
+    id: new-difficulty
+    attributes:
+      label: New Difficulty Level
+      description: |
+        Select a new difficulty level, or choose "Remove difficulty level" to make the activity open to all students.
+        Leave as "No change" if you are not changing this.
+      options:
+        - No change
+        - Beginner
+        - Intermediate
+        - Advanced
+        - Remove difficulty level
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason for Change
+      description: Briefly explain why this change is needed (e.g., room change, new teacher, scheduling conflict).
+      placeholder: e.g., The classroom was reassigned, so the meeting time needs to shift.
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### For the developer implementing this request
+
+        **What needs to be done:**
+        1. Find the activity by name in `src/backend/database.py` under `initial_activities`.
+        2. Update only the fields that have new values provided in this issue.
+        3. If meeting days or times change, update `schedule_details` (`days` list, `start_time` in 24-hour `HH:MM`, `end_time` in 24-hour `HH:MM`) and regenerate the human-readable `schedule` string from those values (e.g., `"Mondays and Fridays, 3:15 PM - 4:45 PM"`).
+        4. If difficulty is set to "Remove difficulty level", delete the `difficulty` key from the activity.
+        5. Do not change `participants` or any other fields not mentioned in this issue.
+
+        **Acceptance criteria:**
+        - The updated information is reflected correctly on the website for the named activity.
+        - No other activities are affected.
+        - The difficulty badge appears, is updated, or is removed as requested.
