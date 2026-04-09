@@ -1,0 +1,112 @@
+name: Add a New Activity
+description: Request a new extracurricular activity to be added to the Mergington High School website.
+title: "Add activity: [Activity Name]"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to request a new extracurricular activity. Fill in all required fields so the request can be completed without any back-and-forth questions.
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Activity Name
+      description: The full name of the new activity as it should appear on the website.
+      placeholder: e.g., Photography Club
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Activity Description
+      description: A short description of what students will do in this activity (1–3 sentences).
+      placeholder: e.g., Learn photography fundamentals, practice composition techniques, and showcase work in a student gallery.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: days
+    attributes:
+      label: Meeting Days
+      description: Select all days this activity meets each week.
+      options:
+        - label: Monday
+        - label: Tuesday
+        - label: Wednesday
+        - label: Thursday
+        - label: Friday
+        - label: Saturday
+        - label: Sunday
+    validations:
+      required: true
+
+  - type: input
+    id: start-time
+    attributes:
+      label: Start Time
+      description: What time does the activity start? Use 12-hour format (e.g., 3:15 PM).
+      placeholder: e.g., 3:15 PM
+    validations:
+      required: true
+
+  - type: input
+    id: end-time
+    attributes:
+      label: End Time
+      description: What time does the activity end? Use 12-hour format (e.g., 4:45 PM).
+      placeholder: e.g., 4:45 PM
+    validations:
+      required: true
+
+  - type: input
+    id: max-participants
+    attributes:
+      label: Maximum Number of Participants
+      description: What is the maximum number of students that can join this activity?
+      placeholder: e.g., 20
+    validations:
+      required: true
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty Level (optional)
+      description: |
+        Select a difficulty level only if this activity is suited to a specific experience level.
+        Leave as "No specific level" if the activity is open to all students regardless of experience.
+      options:
+        - No specific level
+        - Beginner
+        - Intermediate
+        - Advanced
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: Additional Notes
+      description: Anything else the developer should know about this activity (e.g., equipment needed, location, special requirements)?
+      placeholder: Optional — leave blank if there is nothing else to add.
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ### For the developer implementing this request
+
+        **What needs to be done:**
+        1. Add the new activity to the `initial_activities` dictionary in `src/backend/database.py` with the details provided above.
+        2. The `schedule` field should be a human-readable string combining days and times (e.g., `"Mondays and Fridays, 3:15 PM - 4:45 PM"`).
+        3. The `schedule_details` field must include `days` (list of full day names), `start_time` (24-hour `HH:MM`), and `end_time` (24-hour `HH:MM`).
+        4. Set `max_participants` to the number provided and `participants` to an empty list `[]`.
+        5. Only include the `difficulty` field if a specific level was selected (not "No specific level").
+
+        **Acceptance criteria:**
+        - The new activity appears on the website's activity list.
+        - The schedule and participant count are displayed correctly.
+        - The difficulty badge is shown only when a difficulty level was specified.
+        - Students can sign up for the activity (up to the maximum).
