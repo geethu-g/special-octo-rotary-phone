@@ -584,6 +584,12 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-buttons">
+        <span class="share-label">Share:</span>
+        <button class="share-btn share-twitter" data-activity="${name}" aria-label="Share on Twitter/X" title="Share on Twitter/X">𝕏</button>
+        <button class="share-btn share-facebook" data-activity="${name}" aria-label="Share on Facebook" title="Share on Facebook">f</button>
+        <button class="share-btn share-native" data-activity="${name}" aria-label="Share or copy link" title="Share or copy link">🔗</button>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -601,6 +607,41 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for share buttons
+    const activityDescription = details.description || "";
+    const activitySchedule = formattedSchedule || "";
+    const shareText = `Check out "${name}" at Mergington High School!${activityDescription ? " " + activityDescription : ""}${activitySchedule ? " Schedule: " + activitySchedule : ""}`;
+    const shareUrl = `${window.location.origin}${window.location.pathname}?activity=${encodeURIComponent(name)}`;
+
+    activityCard.querySelector(".share-twitter").addEventListener("click", () => {
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(twitterUrl, "_blank", "noopener,noreferrer");
+    });
+
+    activityCard.querySelector(".share-facebook").addEventListener("click", () => {
+      const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+      window.open(facebookUrl, "_blank", "noopener,noreferrer");
+    });
+
+    activityCard.querySelector(".share-native").addEventListener("click", async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: name, text: shareText, url: shareUrl });
+        } catch (err) {
+          if (err.name !== "AbortError") {
+            console.error("Share failed:", err);
+          }
+        }
+      } else {
+        try {
+          await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+          showMessage("Link copied to clipboard!", "success");
+        } catch (err) {
+          showMessage(`Could not copy automatically. Copy this link: ${shareUrl}`, "error");
+        }
+      }
+    });
 
     activitiesList.appendChild(activityCard);
   }
