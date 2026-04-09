@@ -7,9 +7,20 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!-- Animated Git branch background -->
+    <canvas id="git-branch-canvas"></canvas>
+
     <header>
       <h1>Mergington High School</h1>
       <h2>Extracurricular Activities</h2>
+      <!-- Octodex Mascots -->
+      <div class="mascots-strip" aria-label="School mascots">
+        <img class="mascot-img" src="https://octodex.github.com/images/original.png" alt="Original Octocat" title="Original Octocat" loading="lazy" onerror="this.style.display='none'" />
+        <img class="mascot-img" src="https://octodex.github.com/images/class-act.png" alt="Class Act Octocat" title="Class Act" loading="lazy" onerror="this.style.display='none'" />
+        <img class="mascot-img" src="https://octodex.github.com/images/codercat.jpg" alt="Coder Octocat" title="Codercat" loading="lazy" onerror="this.style.display='none'" />
+        <img class="mascot-img" src="https://octodex.github.com/images/nyantocat.gif" alt="Nyan Octocat" title="Nyantocat" loading="lazy" onerror="this.style.display='none'" />
+        <img class="mascot-img" src="https://octodex.github.com/images/doctocat.jpg" alt="Doctor Octocat" title="Doctocat" loading="lazy" onerror="this.style.display='none'" />
+      </div>
       <div id="user-controls">
         <button id="dark-mode-toggle" class="icon-button" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
         <div id="user-status">
