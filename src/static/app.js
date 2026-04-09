@@ -97,7 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const curr = cluster[j];
         for (let k = 0; k < events.length; k++) {
           if (assigned[k] !== -1) continue;
-          // Strict overlap: touching endpoints are NOT considered overlapping
+          // Strict overlap: events that merely touch at an endpoint are NOT considered overlapping,
+          // so back-to-back activities (e.g. 3–4 PM and 4–5 PM) can share the same column.
           if (events[k].startMin < events[curr].endMin && events[k].endMin > events[curr].startMin) {
             assigned[k] = clusters.length;
             cluster.push(k);
@@ -230,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (clampedStart >= clampedEnd) return;
 
         const top = (clampedStart - CAL_START_MIN) * PX_PER_MIN;
-        const height = Math.max((clampedEnd - clampedStart) * PX_PER_MIN, 20);
+        const height = Math.max((clampedEnd - clampedStart) * PX_PER_MIN, MIN_EVENT_HEIGHT_PX);
         const widthPct = 100 / event.totalCols;
         const leftPct = (event.col / event.totalCols) * 100;
 
@@ -243,8 +244,8 @@ document.addEventListener("DOMContentLoaded", () => {
         eventEl.className = "calendar-event";
         eventEl.style.top = top + "px";
         eventEl.style.height = height + "px";
-        eventEl.style.left = `calc(${leftPct}% + 1px)`;
-        eventEl.style.width = `calc(${widthPct}% - 2px)`;
+        eventEl.style.left = `calc(${leftPct}% + ${EVENT_SPACING_PX}px)`;
+        eventEl.style.width = `calc(${widthPct}% - ${EVENT_SPACING_PX * 2}px)`;
         eventEl.style.backgroundColor = event.color;
         eventEl.style.color = event.textColor;
         eventEl.style.borderLeftColor = event.textColor;
@@ -289,10 +290,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentView = "card"; // 'card' or 'calendar'
 
   // Calendar constants
+  // These bounds cover typical school activity hours (earliest: 6:30 AM fitness, latest: 6 PM).
+  // Activities starting before CAL_START_MIN or ending after CAL_END_MIN are clamped to the visible range.
   const DAYS_ORDER = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const CAL_START_MIN = 360;  // 6:00 AM
-  const CAL_END_MIN = 1140;   // 7:00 PM
-  const PX_PER_MIN = 1.5;
+  const CAL_START_MIN = 360;       // 6:00 AM — earliest activity start
+  const CAL_END_MIN = 1140;        // 7:00 PM — latest activity end
+  const PX_PER_MIN = 1.5;         // pixels per minute on the calendar grid
+  const MIN_EVENT_HEIGHT_PX = 20; // minimum height so very short events remain readable
+  const EVENT_SPACING_PX = 1;     // gap between side-by-side overlapping events
 
   // Authentication state
   let currentUser = null;
