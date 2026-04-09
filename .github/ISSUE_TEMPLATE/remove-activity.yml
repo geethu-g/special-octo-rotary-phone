@@ -1,0 +1,52 @@
+name: Remove an Activity
+description: Request that an extracurricular activity be removed from the website because it is no longer offered.
+title: "Remove activity: [Activity Name]"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to request that an activity be permanently removed from the website. Once removed, students will no longer be able to see or sign up for it.
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Activity Name
+      description: The exact name of the activity to remove, as it appears on the website.
+      placeholder: e.g., Drama Club
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason for Removal
+      description: Why is this activity being removed? (e.g., the teacher is leaving, the activity is no longer available, low enrollment, etc.)
+      placeholder: e.g., The supervising teacher is retiring and there is no replacement.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      description: Please confirm the following before submitting.
+      options:
+        - label: I confirm that this activity should be permanently removed from the website.
+          required: true
+        - label: I understand that any students currently signed up will lose their enrollment in this activity.
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ### For the developer implementing this request
+
+        **What needs to be done:**
+        1. Remove the activity entry from the `initial_activities` dictionary in `src/backend/database.py`.
+        2. Remove any existing participant enrollments for this activity from the database.
+        3. Verify that no other part of the code references this activity by name.
+
+        **Acceptance criteria:**
+        - The activity no longer appears in the activity list on the website.
+        - No errors occur when the website loads after the activity is removed.
